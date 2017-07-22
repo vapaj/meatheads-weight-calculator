@@ -44,7 +44,11 @@ defmodule MeatheadsWeightCalculator do
     IO.puts "Weights for week #{options[:week]}:"
     for {lift_name, training_max} <- options,
         Enum.member?(@lift_names, lift_name) do
-      IO.puts "#{lift_name}: #{calculate_weight_to_nearest_2_point_5_kg(weight_percentages, training_max)}"
+      IO.puts """
+        #{lift_name}:
+          warm-up sets: #{calculate_warmup_sets(training_max)},
+          work sets:    #{calculate_weight_to_nearest_2_point_5_kg(weight_percentages, training_max)}
+      """
     end
   end
 
@@ -54,6 +58,10 @@ defmodule MeatheadsWeightCalculator do
       Float.round(training_max_int * percentage / 2.5) * 2.5 |> Float.to_string
     end
     |> Enum.join(", ")
+  end
+
+  defp calculate_warmup_sets(training_max) do
+    calculate_weight_to_nearest_2_point_5_kg([0.4, 0.5, 0.6], training_max)
   end
 
   defp parse_args(args) do
